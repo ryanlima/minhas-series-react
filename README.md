@@ -1,3 +1,14 @@
+## INSTRUÇÕES
+RODA API COM JSON-SERVER
+### `json-server --watch db.json --port 3001`
+The build folder is ready to be deployed.
+You may serve it with a static server:
+
+### `yarn global add serve`
+### `serve -s build`
+
+
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts

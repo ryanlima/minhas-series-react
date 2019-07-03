@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import api from './Api'
+import { Link } from 'react-router-dom'
 
 const statuses = {
     'watched' : 'Assistido',
@@ -15,9 +16,15 @@ class Series extends Component{
             isLoading: false,
             series: []
         }
+        this.renderSeries = this.renderSeries.bind(this)
+        this.loadData = this.loadData.bind(this)
     }
 
     componentDidMount(){
+        this.loadData()
+    }
+
+    loadData(){
         this.setState({ isLoading: true})
         api.loadSeriesByGenre(this.props.match.params.genre).then((res)=>{
             this.setState({
@@ -25,7 +32,10 @@ class Series extends Component{
                 series: res.data
             })
         })
+    }
 
+    deleteSeries(id){
+        api.deleteSeries(id).then((res) => this.loadData())
     }
     renderSeries(series){
         return(
@@ -40,7 +50,8 @@ class Series extends Component{
                                     <p className="lead">{series.genre} / {statuses[series.status]}</p>
                                 </div>
                                 <div className="col-xs-12 col-md-6">
-                                    <a className="btn btn-success" href="http://www.aridesa.com.br">Gerenciar</a>
+                                    <Link className="btn btn-success" to={'/series-edit/'+series.id}>Editar</Link>
+                                    <button  className="btn btn-danger" onClick={() => this.deleteSeries(series.id)} href="#">Excluir</button >
                                 </div>
                             </div>
                         </div>
@@ -52,6 +63,14 @@ class Series extends Component{
         return (
             <section className="intro-section">
                 <h1>Séries {this.props.match.params.genre}</h1>
+                {
+                    this.state.isLoading &&
+                    <p>Carregando, aguarde...</p>
+                }
+                {
+                     !this.state.isLoading && this.state.series.length === 0 &&
+                    <div className="alert alert-info">Nenhuma Série Cadastrada</div>
+                }
                 <div id="series" className="row list-group">
                   { !this.state.isLoading &&
                     this.state.series.map(this.renderSeries)
